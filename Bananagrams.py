@@ -21,29 +21,79 @@ class GameModel(object):
 	}
 
 	def __init__(self, players):
+		self.game_running = False
+
 		self.tiles = self.create_tile_bucket()
 		self.players = players
 		self.number_of_players = len(self.players)
+		self.tiles_per_person = self.calculate_tiles_per_person(self.number_of_players)
 
+
+	def start_game(self):
 		self.distribute_tiles(self.players)
+		self.game_running = True
+
+
+	# def end_game(self, player):
+	# 	self.game_running = False
+
+
+	def return_tiles(self, tiles, player):
+		for tile in tiles:
+			tile_index = player.tiles.index(tile)
+			self.tiles += player.tiles.pop(tile_index)
+
+
+	def dump(self, tile, player):
+		if self.enough_tiles_for_dump():
+			self.return_tiles([tile], player)
+			self.give_player_tiles(3, player)
+			return True
+
+		else:
+			return False
+
+
 
 	def create_tile_bucket(self):
 		nested_tile_lists = [letter * distribution for letter, distribution in self.letter_distributions.items()]
 		tiles = [tile for sublist in nested_tile_lists for tile in sublist]
 		shuffle(tiles)
 		return tiles
-		
-	def give_player_tiles(self, tiles, player):
-		player.tiles += self.tiles[0:tiles]
-		
-	def distribute_tiles(self, players):
-		if self.number_of_players < 5:
-			tiles_per_person = 21
-		elif self.number_of_players < 7:
-			tiles_per_person = 15
-		elif self.number_of_players > 6:
-			tiles_per_person = 11
 
+	def get_number_of_tiles(self):
+		return len(self.tiles)
+
+
+	def enough_tiles_for_dump(self):
+		# is player allowed to put their tile in and retrieve 3 remaining?
+		return self.get_number_of_tiles() >= 2
+
+
+	def enough_tiles_for_peel(self):
+		return self.get_number_of_tiles() >= self.number_of_players
+
+
+	def give_player_tiles(self, number_of_tiles, player):
+		player.tiles += [self.tiles.pop() for tile in range(number_of_tiles)]
+
+
+	def give_player_one_tile(self, player):
+		self.give_player_tiles(1, player)
+
+
+	
+	def calculate_tiles_per_person(self, number_of_players):
+		if number_of_players < 5:
+			return 21
+		elif number_of_players < 7:
+			return 15
+		elif number_of_players > 6:
+			return 11
+
+
+	def distribute_tiles(self, players):
+		tiles_per_person = self.tiles_per_person
 		for player in players:
 			self.give_player_tiles(tiles_per_person, player)
 			
