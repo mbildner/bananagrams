@@ -35,13 +35,13 @@ class TestInitializeGameFunction(unittest.TestCase):
 	def test_give_player_tiles(self):
 		player2 = self.game_model.players[1]
 
-		player1_tile_count = len(self.player1.tiles)
+		player1_tile_count = self.player1.get_tile_count()
 		player2_tile_count = len(player2.tiles)
 
 		extra_tiles = random.randint(1, len(self.game_model.tiles))
 
 		self.game_model.give_player_tiles(extra_tiles, self.player1)
-		self.assertEqual(extra_tiles, (len(self.player1.tiles) - player1_tile_count))
+		self.assertEqual(extra_tiles, (self.player1.get_tile_count() - player1_tile_count))
 
 
 	def test_start_game(self):
@@ -58,57 +58,50 @@ class TestGamePlayFunction(unittest.TestCase):
 	 	players = [player1, player2]
 		self.game_model = GameModel(players)
 		self.player1 = self.game_model.players[0]
+		self.player2 = self.game_model.players[1]
+		self.number_of_players = len(self.game_model.players)
 
 		self.game_model.start_game()
 
+		self.init_player1_tile_count = self.player1.get_tile_count()
+		self.init_player2_tile_count = self.player2.get_tile_count()
+		self.init_game_tile_count = self.game_model.get_number_of_tiles()
+
+
+
 	def test_return_tiles(self):
-		
-
-
-		player1_tile_count = len(self.player1.tiles)
-
-		game_tile_count = self.game_model.get_number_of_tiles()
-
 		# randomize this?
 		tiles_to_return = self.player1.tiles[0:4]
 
 		self.game_model.return_tiles(tiles_to_return, self.player1)
 		
-		self.assertEquals(game_tile_count + len(tiles_to_return), self.game_model.get_number_of_tiles())
-		self.assertEquals(player1_tile_count - len(self.player1.tiles), len(tiles_to_return))
+		self.assertEquals(self.init_game_tile_count + len(tiles_to_return), self.game_model.get_number_of_tiles())
+		self.assertEquals(self.init_player1_tile_count - self.player1.get_tile_count(), len(tiles_to_return))
 
 
 	def test_dump_success(self):
-		self.game_model.start_game()
-		player1_tile_count = len(self.player1.tiles)
-		game_tile_count = self.game_model.get_number_of_tiles()
-
 		dump_succeeded = self.game_model.dump(self.player1.tiles[0], self.player1)
 		
-		self.assertEquals(game_tile_count - 2, self.game_model.get_number_of_tiles())
-		self.assertEquals(len(self.player1.tiles) - player1_tile_count, 2)
+		self.assertEquals(self.init_game_tile_count - 2, self.game_model.get_number_of_tiles())
+		self.assertEquals(self.player1.get_tile_count() - self.init_player1_tile_count, 2)
 		self.assertTrue(dump_succeeded)
 
 
 	def test_dump_failure(self):
-		self.game_model.start_game()
 		self.game_model.give_player_tiles(self.game_model.get_number_of_tiles() - 1, self.player1)
-		player1_tile_count = len(self.player1.tiles)
+		player1_tile_count = self.player1.get_tile_count()
 		game_tile_count = self.game_model.get_number_of_tiles()
 
 		dump_succeeded = self.game_model.dump(self.player1.tiles[0], self.player1)
 
 		self.assertEquals(game_tile_count, self.game_model.get_number_of_tiles())
-		self.assertEquals(len(self.player1.tiles), player1_tile_count)
+		self.assertEquals(self.player1.get_tile_count(), player1_tile_count)
 		self.assertFalse(dump_succeeded)
 
 	# def test_peel_midgame(self):
-	# 	self.game_model.start_game()
-	# 	player1_tile_count = len(self.player1.tiles)
-	# 	game_tile_count = self.game_model.get_number_of_tiles()
-
-
 	# 	self.game_model.peel(self.player1)
+	# 	for player in self.game_model.players:
+	# 		self.assertEquals(self.)
 
 
 
