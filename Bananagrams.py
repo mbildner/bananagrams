@@ -10,6 +10,10 @@ class GamePlayer(object):
 	def get_tile_count(self):
 		return len(self.tiles)
 
+	# PUT STUFF HERE
+	def check_if_board_valid(self):
+		return True
+
 
 class GameModel(object):
 	"""Holds all game state and manages state transitions for the bananagrams game"""
@@ -56,8 +60,19 @@ class GameModel(object):
 		else:
 			return False
 
-	def peel(self, player):
-		pass
+	# def peel(self, peel_player):
+	# 	if self.enough_tiles_for_peel():
+	# 		for player in self.players:
+	# 			self.give_player_one_tile(player)
+	# 	else:
+	# 		# check that peel_player has valid board
+	# 		#   if no: return all of peel_player's tiles
+	# 		#   else: declare peel_player winner
+	# 		if peel_player.check_if_board_valid():
+	# 			self.declare_winner( peel_player )
+	# 		else:
+	# 			self.return_tiles(peel_player.tiles, peel_player)
+	# 		print "let's do it"
 
 
 
@@ -67,17 +82,17 @@ class GameModel(object):
 		shuffle(tiles)
 		return tiles
 
-	def get_number_of_tiles(self):
+	def get_tile_count(self):
 		return len(self.tiles)
 
 
 	def enough_tiles_for_dump(self):
 		# is player allowed to put their tile in and retrieve 3 remaining?
-		return self.get_number_of_tiles() >= 2
+		return self.get_tile_count() >= 2
 
 
 	def enough_tiles_for_peel(self):
-		return self.get_number_of_tiles() >= self.number_of_players
+		return self.get_tile_count() >= self.number_of_players
 
 
 	def give_player_tiles(self, number_of_tiles, player):
