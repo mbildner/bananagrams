@@ -7,6 +7,9 @@ class GamePlayer(object):
 		self.name = name
 		self.tiles = []
 
+	def get_tile_count(self):
+		return len(self.tiles)
+
 
 class GameModel(object):
 	"""Holds all game state and manages state transitions for the bananagrams game"""
@@ -52,6 +55,9 @@ class GameModel(object):
 
 		else:
 			return False
+
+	def peel(self, player):
+		pass
 
 
 
