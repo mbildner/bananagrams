@@ -13,6 +13,7 @@ class TestInitializeGameFunction(unittest.TestCase):
 
 	 	players = [player1, player2]
 		self.game_model = GameModel(players)
+		self.player1 = self.game_model.players[0]
 
 	def test_letter_bucket_creation(self):
 		tiles = self.game_model.tiles
@@ -32,7 +33,7 @@ class TestInitializeGameFunction(unittest.TestCase):
 
 
 	def test_give_player_tiles(self):
-		player1 = self.game_model.players[0]
+		player1 = self.player1
 		player2 = self.game_model.players[1]
 
 		player1_tile_count = len(player1.tiles)
@@ -53,7 +54,7 @@ class TestInitializeGameFunction(unittest.TestCase):
 	def test_return_tiles(self):
 		self.game_model.start_game()
 
-		player1 = self.game_model.players[0]
+		player1 = self.player1
 
 		player1_tile_count = len(player1.tiles)
 
@@ -70,7 +71,7 @@ class TestInitializeGameFunction(unittest.TestCase):
 
 	def test_dump_success(self):
 		self.game_model.start_game()
-		player1 = self.game_model.players[0]
+		player1 = self.player1
 		player1_tile_count = len(player1.tiles)
 		game_tile_count = self.game_model.get_number_of_tiles()
 
@@ -83,7 +84,7 @@ class TestInitializeGameFunction(unittest.TestCase):
 
 	def test_dump_failure(self):
 		self.game_model.start_game()
-		player1 = self.game_model.players[0]
+		player1 = self.player1
 		self.game_model.give_player_tiles(self.game_model.get_number_of_tiles() - 1, player1)
 		player1_tile_count = len(player1.tiles)
 		game_tile_count = self.game_model.get_number_of_tiles()
@@ -93,6 +94,9 @@ class TestInitializeGameFunction(unittest.TestCase):
 		self.assertEquals(game_tile_count, self.game_model.get_number_of_tiles())
 		self.assertEquals(len(player1.tiles), player1_tile_count)
 		self.assertFalse(dump_succeeded)
+
+	def test_peel_midgame(self):
+		self.game_model.start_game()
 
 
 
