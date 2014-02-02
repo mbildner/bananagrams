@@ -1,10 +1,40 @@
 import unittest
-from Bananagrams import GameModel, GamePlayer
+from Bananagrams import GameModel, GamePlayer, WordDictionary
 
 from copy import deepcopy
-
-
 import random
+
+
+class TestWordDictionaryClass(unittest.TestCase):
+	def setUp(self):
+		self.word_dict = WordDictionary("/usr/share/dict/words")
+
+	def test_multiple_word_validation(self):
+		test_word_list = ["clean", "dirty", "test", "self", "python"]
+		test_return_boolean = self.word_dict.are_valid_words(test_word_list)
+		self.assertTrue(test_return_boolean)
+
+		test_word_list = ["California", "dirty", "test", "self", "python"]
+		test_return_boolean = self.word_dict.are_valid_words(test_word_list)
+		self.assertFalse(test_return_boolean)
+
+		test_word_list = ["fasdf", "efauwfads", "test", "self", "python"]
+		test_return_boolean = self.word_dict.are_valid_words(test_word_list)
+		self.assertFalse(test_return_boolean)
+
+	def test_single_word_validation(self):
+		test_word = "table"
+		test_return_boolean = self.word_dict.is_valid_word(test_word)
+		self.assertTrue(test_return_boolean)
+
+		test_word = "Gregory"
+		test_return_boolean = self.word_dict.is_valid_word(test_word)
+		self.assertFalse(test_return_boolean)
+
+		test_word = "fasdfasd"
+		test_return_boolean = self.word_dict.is_valid_word(test_word)
+		self.assertFalse(test_return_boolean)
+
 
 class TestInitializeGameFunction(unittest.TestCase):
 	def setUp(self):
@@ -12,7 +42,11 @@ class TestInitializeGameFunction(unittest.TestCase):
 	 	player2 = GamePlayer('player2')
 
 	 	players = [player1, player2]
-		self.game_model = GameModel(players)
+
+		word_dict = WordDictionary("/usr/share/dict/words")
+
+
+		self.game_model = GameModel(players, word_dict)
 		self.player1 = self.game_model.players[0]
 
 	def test_letter_bucket_creation(self):
@@ -56,7 +90,10 @@ class TestGamePlayFunction(unittest.TestCase):
 	 	player2 = GamePlayer('player2')
 
 	 	players = [player1, player2]
-		self.game_model = GameModel(players)
+
+	 	word_dict = WordDictionary("/usr/share/dict/words")
+	 	self.game_model = GameModel(players, word_dict)
+
 		self.player1 = self.game_model.players[0]
 		self.player2 = self.game_model.players[1]
 		self.number_of_players = len(self.game_model.players)
@@ -110,6 +147,12 @@ class TestGamePlayFunction(unittest.TestCase):
 	# 	while self.game_model.enough_tiles_for_peel():
 	# 		self.game_model.peel(self.player1)
 	# 	self.game_model.peel(self.player1)
+	
+	
+
+
+
+
 
 
 
@@ -120,6 +163,3 @@ class TestGamePlayFunction(unittest.TestCase):
 
 if __name__ == '__main__':
 	unittest.main()
-
-
-

@@ -1,18 +1,32 @@
 from random import shuffle
 
 
+class WordDictionary(object):
+	def __init__(self, dictionary_path):
+		"""Holds valid words in a set for checking user boards for validity"""
+		with open(dictionary_path, "r") as all_words:
+			self.valid_words = {word.strip("\n") for word in all_words if word[0].islower()}
+
+	def are_valid_words(self, word_list):
+		"""Check whether a list of words is a subset of the valid_words set"""
+		word_set = set(word_list)
+		return word_set <= self.valid_words
+
+	def is_valid_word(self, word):
+		"""Check whether a single word is valid"""
+		return self.are_valid_words([word])
+
+
 class GamePlayer(object):
 	"""Holds game state for individual players and manages their state transitions"""
+
 	def __init__(self, name):
 		self.name = name
 		self.tiles = []
+		self.words = []
 
 	def get_tile_count(self):
 		return len(self.tiles)
-
-	# PUT STUFF HERE
-	def check_if_board_valid(self):
-		return True
 
 
 class GameModel(object):
@@ -27,7 +41,8 @@ class GameModel(object):
 	"z": 2
 	}
 
-	def __init__(self, players):
+	def __init__(self, players, word_dictionary):
+		self.word_dictionary = word_dictionary
 		self.game_running = False
 
 		self.tiles = self.create_tile_bucket()
