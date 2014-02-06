@@ -44,6 +44,7 @@ class GameModel(object):
 	def __init__(self, players, word_dictionary):
 		self.word_dictionary = word_dictionary
 		self.game_running = False
+		self.winning_player = None
 
 		self.tiles = self.create_tile_bucket()
 		self.players = players
@@ -56,8 +57,13 @@ class GameModel(object):
 		self.game_running = True
 
 
-	# def end_game(self, player):
-	# 	self.game_running = False
+	def end_game(self, player):
+		self.winning_player = player
+		self.game_running = False
+
+
+	def are_valid_words(self, words_list):
+		return self.word_dictionary.are_valid_words(words_list)
 
 
 	def return_tiles(self, tiles, player):
@@ -75,20 +81,21 @@ class GameModel(object):
 		else:
 			return False
 
-	# def peel(self, peel_player):
-	# 	if self.enough_tiles_for_peel():
-	# 		for player in self.players:
-	# 			self.give_player_one_tile(player)
-	# 	else:
-	# 		# check that peel_player has valid board
-	# 		#   if no: return all of peel_player's tiles
-	# 		#   else: declare peel_player winner
-	# 		if peel_player.check_if_board_valid():
-	# 			self.declare_winner( peel_player )
-	# 		else:
-	# 			self.return_tiles(peel_player.tiles, peel_player)
-	# 		print "let's do it"
 
+	def peel(self, peel_player):
+		for player in self.players:
+			if self.enough_tiles_for_peel():
+				self.give_player_one_tile(player)
+				return True
+
+			else:
+				self.game_running = self.finish_player(peel_player)
+				return False
+
+
+	def finish_player(self, player):
+		if self.are_valid_words(player.words):
+			self.end_game(player)
 
 
 	def create_tile_bucket(self):
@@ -132,16 +139,3 @@ class GameModel(object):
 		tiles_per_person = self.tiles_per_person
 		for player in players:
 			self.give_player_tiles(tiles_per_person, player)
-			
-
-
-
-
-
-
-
-
-
-
-
-

@@ -84,6 +84,46 @@ class TestInitializeGameFunction(unittest.TestCase):
 		self.assertTrue(self.game_model.game_running)
 
 
+class TestGameEndFunction(unittest.TestCase):
+	def setUp(self):
+	 	player1 = GamePlayer('player1')
+	 	player2 = GamePlayer('player2')
+
+	 	players = [player1, player2]
+
+	 	word_dict = WordDictionary("/usr/share/dict/words")
+	 	self.game_model = GameModel(players, word_dict)
+
+		self.player1 = self.game_model.players[0]
+		self.player2 = self.game_model.players[1]
+		self.number_of_players = len(self.game_model.players)
+
+		self.game_model.start_game()
+
+		self.init_player1_tile_count = self.player1.get_tile_count()
+		self.init_player2_tile_count = self.player2.get_tile_count()
+		self.init_game_tile_count = self.game_model.get_tile_count()
+
+		while self.game_model.enough_tiles_for_peel():
+			self.game_model.peel(random.choice(players))
+
+
+	def test_winning_peel(self):
+		players = self.game_model.players
+		players[0].words = ["hello", "world", "sounds", "good"]
+		players[1].words = ["goodbye", "thanks", "friend"]
+
+		ending_game_player = random.choice(players)
+
+		self.game_model.peel(ending_game_player)
+
+		self.assertEqual(ending_game_player, self.game_model.winning_player)
+
+
+	# def test_losing_peel(self):
+	# a single losing player is likely to make the other player win, be careful with this function
+
+
 class TestGamePlayFunction(unittest.TestCase):
 	def setUp(self):
 	 	player1 = GamePlayer('player1')
@@ -142,24 +182,15 @@ class TestGamePlayFunction(unittest.TestCase):
 	# 	self.assertEquals( self.player2.get_tile_count() - self.init_player2_tile_count, 1)
 	# 	self.assertEquals( self.init_game_tile_count - self.game_model.get_tile_count(), self.number_of_players )
 
-	# def test_peel_endgame(self):
-	# 	self.game_model.peel(self.player1)
-	# 	while self.game_model.enough_tiles_for_peel():
-	# 		self.game_model.peel(self.player1)
-	# 	self.game_model.peel(self.player1)
+	def test_peel_endgame(self):
+		while self.game_model.enough_tiles_for_peel():
+			self.game_model.peel(self.player1)
+		self.game_model.peel(self.player1)
+
+		self.assertFalse(self.game_model.game_running)
+
 	
 	
-
-
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
 	unittest.main()
