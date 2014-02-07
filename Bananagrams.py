@@ -8,9 +8,16 @@ class WordDictionary(object):
 			self.valid_words = {word.strip("\n") for word in all_words if word[0].islower()}
 
 	def are_valid_words(self, word_list):
+		# BROKEN: the dictionary is not comprehensive enough, need a better plug in.
 		"""Check whether a list of words is a subset of the valid_words set"""
+
 		word_set = set(word_list)
-		return word_set <= self.valid_words
+		invalid_words = word_set - self.valid_words
+		if invalid_words:
+			return False
+
+		return True
+
 
 	def is_valid_word(self, word):
 		"""Check whether a single word is valid"""
@@ -82,20 +89,24 @@ class GameModel(object):
 			return False
 
 
-	def peel(self, peel_player):
-		for player in self.players:
-			if self.enough_tiles_for_peel():
-				self.give_player_one_tile(player)
-				return True
+	# def peel(self, peel_player):
+	# 	if self.enough_tiles_for_peel():
+	# 		for player in self.players:
+	# 				self.give_player_one_tile(player)
+	# 	else:
+	# 		if self.finish_player(peel_player):
+	# 			return False
+	# 		else:
 
-			else:
-				self.game_running = self.finish_player(peel_player)
-				return False
+
+	# 	return True
 
 
 	def finish_player(self, player):
 		if self.are_valid_words(player.words):
 			self.end_game(player)
+			return True
+		return False
 
 
 	def create_tile_bucket(self):

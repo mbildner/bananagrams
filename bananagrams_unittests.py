@@ -22,38 +22,34 @@ class TestWordDictionaryClass(unittest.TestCase):
 		test_return_boolean = self.word_dict.are_valid_words(test_word_list)
 		self.assertFalse(test_return_boolean)
 
-	def test_single_word_validation(self):
-		test_word = "table"
-		test_return_boolean = self.word_dict.is_valid_word(test_word)
+		test_word_list = ["hello", "world", "sound", "good"]
+		test_return_boolean = self.word_dict.are_valid_words(test_word_list)
 		self.assertTrue(test_return_boolean)
 
-		test_word = "Gregory"
-		test_return_boolean = self.word_dict.is_valid_word(test_word)
-		self.assertFalse(test_return_boolean)
+	def test_single_word_validation(self):
+		self.assertTrue(self.word_dict.is_valid_word("table"), True)
+		self.assertTrue(self.word_dict.is_valid_word("chair"), True)
+		self.assertTrue(self.word_dict.is_valid_word("eat"), True)
 
-		test_word = "fasdfasd"
-		test_return_boolean = self.word_dict.is_valid_word(test_word)
-		self.assertFalse(test_return_boolean)
+		self.assertFalse(self.word_dict.is_valid_word("fdsafds"), False)
+		self.assertFalse(self.word_dict.is_valid_word("Gregory"), False)
+		self.assertFalse(self.word_dict.is_valid_word("good idea"), False)
+		self.assertFalse(self.word_dict.is_valid_word(23), False)
+		self.assertFalse(self.word_dict.is_valid_word(""), False)
 
 
 class TestInitializeGameFunction(unittest.TestCase):
 	def setUp(self):
 	 	player1 = GamePlayer('player1')
 	 	player2 = GamePlayer('player2')
-
 	 	players = [player1, player2]
-
 		word_dict = WordDictionary("/usr/share/dict/words")
-
-
 		self.game_model = GameModel(players, word_dict)
 		self.player1 = self.game_model.players[0]
 
 	def test_letter_bucket_creation(self):
 		tiles = self.game_model.tiles
-
 		self.assertEqual(len(tiles), 144)
-
 		cloned_tiles = deepcopy(tiles)
 		cloned_tiles.sort()
 		self.assertNotEqual(cloned_tiles, tiles)
@@ -110,17 +106,25 @@ class TestGameEndFunction(unittest.TestCase):
 
 	def test_winning_peel(self):
 		players = self.game_model.players
-		players[0].words = ["hello", "world", "sounds", "good"]
-		players[1].words = ["goodbye", "thanks", "friend"]
-
+		players[0].words = ["hello", "good", "sound", "interest", "thing"]
+		players[1].words = ["friend", "sound", "interest", "thing"]
 		ending_game_player = random.choice(players)
-
 		self.game_model.peel(ending_game_player)
-
 		self.assertEqual(ending_game_player, self.game_model.winning_player)
 
 
-	# def test_losing_peel(self):
+	def test_losing_peel(self):
+		players = self.game_model.players
+		players[0].words = ["hello", "good", "sound", "interest", "thing"]
+		players[1].words = ["Moshe", "FDFS", 12]
+		
+		while self.game_model.enough_tiles_for_peel():
+			self.game_model.peel(random.choice(players))
+
+		self.game_model.peel(players[1])
+		self.assertEquals(self.game_model.winning_player, players[0])
+
+
 	# a single losing player is likely to make the other player win, be careful with this function
 
 
@@ -175,22 +179,18 @@ class TestGamePlayFunction(unittest.TestCase):
 		self.assertEquals(self.player1.get_tile_count(), player1_tile_count)
 		self.assertFalse(dump_succeeded)
 
-	# def test_peel_midgame(self):
-	# 	self.game_model.peel(self.player1)
-
-	# 	self.assertEquals( self.player1.get_tile_count() - self.init_player1_tile_count, 1)
-	# 	self.assertEquals( self.player2.get_tile_count() - self.init_player2_tile_count, 1)
-	# 	self.assertEquals( self.init_game_tile_count - self.game_model.get_tile_count(), self.number_of_players )
-
-	def test_peel_endgame(self):
-		while self.game_model.enough_tiles_for_peel():
-			self.game_model.peel(self.player1)
+	def test_peel_midgame(self):
 		self.game_model.peel(self.player1)
+		self.assertEquals( self.player1.get_tile_count() - self.init_player1_tile_count, 1)
+		self.assertEquals( self.player2.get_tile_count() - self.init_player2_tile_count, 1)
+		self.assertEquals( self.init_game_tile_count - self.game_model.get_tile_count(), self.number_of_players )
 
-		self.assertFalse(self.game_model.game_running)
-
-	
-	
+	# def test_peel_win(self):
+	# 	while self.game_model.enough_tiles_for_peel():
+	# 		self.game_model.peel(self.player1)
+	# 	self.game_model.peel(self.player1)
+	# 	self.assertFalse(self.game_model.game_running)
+		
 
 if __name__ == '__main__':
 	unittest.main()
