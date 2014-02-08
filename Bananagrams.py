@@ -89,24 +89,35 @@ class GameModel(object):
 			return False
 
 
-	# def peel(self, peel_player):
-	# 	if self.enough_tiles_for_peel():
-	# 		for player in self.players:
-	# 				self.give_player_one_tile(player)
-	# 	else:
-	# 		if self.finish_player(peel_player):
-	# 			return False
-	# 		else:
+	def peel(self, peel_player):
+		if self.enough_tiles_for_peel():
+			for player in self.players:
+				self.give_player_one_tile(player)
+
+		else:
+			if self.are_valid_words(peel_player.words):
+				self.finish_player(peel_player, True)
+			else:
+				self.finish_player(peel_player, False)
 
 
-	# 	return True
+	def finish_player(self, player, win):
+		if win:
+			self.finish_game(player)
+
+		else:
+			self.players.remove(player)
+			if len(self.players) == 1:
+				self.finish_player(self.players[0], True)
+				return
+
+			shuffle(player.tiles)
+			self.tiles += player.tiles
 
 
-	def finish_player(self, player):
-		if self.are_valid_words(player.words):
-			self.end_game(player)
-			return True
-		return False
+	def finish_game(self, player):
+		self.winning_player = player
+		self.game_running = False
 
 
 	def create_tile_bucket(self):
@@ -114,6 +125,7 @@ class GameModel(object):
 		tiles = [tile for sublist in nested_tile_lists for tile in sublist]
 		shuffle(tiles)
 		return tiles
+
 
 	def get_tile_count(self):
 		return len(self.tiles)
@@ -136,7 +148,6 @@ class GameModel(object):
 		self.give_player_tiles(1, player)
 
 
-	
 	def calculate_tiles_per_person(self, number_of_players):
 		if number_of_players < 5:
 			return 21
