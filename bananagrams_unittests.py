@@ -185,11 +185,11 @@ class TestGamePlayFunction(unittest.TestCase):
 		self.assertEquals( self.player2.get_tile_count() - self.init_player2_tile_count, 1)
 		self.assertEquals( self.init_game_tile_count - self.game_model.get_tile_count(), self.number_of_players )
 
-	# def test_peel_win(self):
-	# 	while self.game_model.enough_tiles_for_peel():
-	# 		self.game_model.peel(self.player1)
-	# 	self.game_model.peel(self.player1)
-	# 	self.assertFalse(self.game_model.game_running)
+	def test_peel_win(self):
+		while self.game_model.enough_tiles_for_peel():
+			self.game_model.peel(self.player1)
+		self.game_model.peel(self.player1)
+		self.assertFalse(self.game_model.game_running)
 		
 
 if __name__ == '__main__':
