@@ -1,4 +1,4 @@
-python:
-	-"2.7"
+language: python
+python:-"2.7"
 
 script: "python bananagrams_unittests.py"
