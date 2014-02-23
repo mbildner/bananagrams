@@ -1,0 +1,49 @@
+<html>
+<head>
+	<title>Bananagrams</title>
+</head>
+<body>
+	<h1>Hurray</h1>
+
+	<textarea rows="5" id="gameBoard"></textarea>
+
+	<script>
+
+	var gameBoard = document.getElementById('gameBoard');
+
+	var websocket = new WebSocket('ws://localhost:8000/ws');
+
+	function handleMessage (messageEvent) {
+		var message = messageEvent.data;
+		var parsedMessage = JSON.parse(message);
+
+		if (parsedMessage.description==="boardState") {
+			gameBoard.value = parsedMessage.payload;
+		}
+
+	};
+
+	function websocketClosed (closingEvent) {
+
+	};
+
+	function websocketOpened (openingEvent) {
+
+	};
+
+	websocket.addEventListener('open', websocketOpened);
+	websocket.addEventListener('close', websocketClosed);
+	websocket.addEventListener('message', handleMessage);
+
+	gameBoard.addEventListener('keydown', function (event) {
+		if (event.which===13) {
+			websocket.send(gameBoard.value);
+			gameBoard.value = '';
+			event.preventDefault();
+		}
+	});
+
+
+	</script>
+</body>
+</html>
