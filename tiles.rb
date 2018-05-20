@@ -9,11 +9,11 @@ class Dictionary
     [
       'apple',
       'eat',
+      'eats',
       'reads'
     ].include? word
   end
 end
-
 
 class WordFinder
   attr_reader :grid
@@ -78,8 +78,12 @@ class WordFinder
   end
 end
 
-
 class Board
+  class InvalidTileLocation < Exception; end
+  class InvalidTileContents < Exception; end
+
+  VALID_LETTERS=%w|a b c d e f g h i j k l m n o p q r s t u v w x y z|
+
   def self.parse(board)
     grid = board.split("\n")
       .map do |row|
@@ -91,10 +95,11 @@ class Board
     Board.new(grid)
   end
 
-  attr_reader :grid
+  attr_reader :grid, :dictionary
 
-  def initialize(grid)
+  def initialize(grid, dictionary=Dictionary.new)
     @grid = grid
+    @dictionary = dictionary
   end
 
   def all_letters
@@ -109,10 +114,21 @@ class Board
     WordFinder.new(grid).words
   end
 
+  def add(letter, row, column)
+    raise InvalidTileLocation.new("row: #{row} column: #{column} is out of bounds") unless in_bounds?(row, column)
+    raise InvalidTileContents.new("'#{letter}' is not valid, see rules") unless valid_tile_contents?(letter)
+
+    existing = at(row, column)
+
+    grid[row][column] = letter
+
+    existing
+  end
+
   private
 
-  def dictionary
-    @_dictionary ||= Dictionary.new
+  def valid_tile_contents?(letter)
+    VALID_LETTERS.include? letter
   end
 
   def valid_words?
@@ -125,6 +141,10 @@ class Board
 
   def first_tree
     walk_tree(*first)
+  end
+
+  def in_bounds?(row, col)
+    row >= 0 && row < grid.length && col >= 0 && col < grid.first.length
   end
 
   def neighbors(r, c)
@@ -227,4 +247,10 @@ t . . . a
 . . . . .
 VALID_EXAMPLE
 
-puts Board.parse(valid_example).valid?
+board = Board.parse(valid_example)
+
+puts board.valid?
+
+board.add('s', 4, 0)
+
+puts board.valid?
