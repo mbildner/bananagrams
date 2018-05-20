@@ -125,6 +125,20 @@ class Board
     existing
   end
 
+  def to_s
+    grid.reduce('') do |coll, row|
+      coll + "\n" + row.reduce('') do |coll1, letter|
+        letter = '.' if letter == nil
+
+        coll1 + ' ' + letter
+      end
+    end
+  end
+
+  def to_json
+    grid.to_json
+  end
+
   private
 
   def valid_tile_contents?(letter)
@@ -254,3 +268,5 @@ puts board.valid?
 board.add('s', 4, 0)
 
 puts board.valid?
+
+puts board.to_json
