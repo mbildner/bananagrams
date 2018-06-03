@@ -1,17 +1,10 @@
 require 'rest-client'
 require 'json'
 
-PEARSON_APP_ID=ENV.fetch('PEARSON_APP_ID')
-PEARSON_API_KEY=ENV.fetch('PEARSON_API_KEY')
-
 class PearsonDictionary
   CACHE_FILE_NAME = '.dict.json'
-  attr_reader :app_id, :api_key
 
-  def initialize(app_id, api_key)
-    @app_id = app_id
-    @api_key = api_key
-
+  def initialize
     File.write(CACHE_FILE_NAME, "{}") unless File.exist?(CACHE_FILE_NAME)
   end
 
@@ -24,10 +17,7 @@ class PearsonDictionary
   end
 
   def headers
-    @_headers ||= {
-      'app_id' => app_id,
-      'app_key' => api_key
-    }
+    {}
   end
 
   def url(word)
@@ -40,7 +30,7 @@ class PearsonDictionary
       headers
     )
 
-    results = JSON.parse(response)
+    results = JSON.parse(response)['results']
 
     !results.empty?
   end

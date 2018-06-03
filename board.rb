@@ -1,5 +1,7 @@
 require 'json'
 require 'set'
+require './pearson_dictionary'
+require './word_finder'
 
 class Board
   class InvalidTileLocation < Exception; end
@@ -20,7 +22,7 @@ class Board
 
   attr_reader :grid, :dictionary
 
-  def initialize(grid, dictionary=PearsonDictionary.new(PEARSON_APP_ID, PEARSON_API_KEY))
+  def initialize(grid, dictionary=PearsonDictionary.new)
     @grid = grid
     @dictionary = dictionary
   end
@@ -176,11 +178,11 @@ valid_example = <<-VALID_EXAMPLE
 . . . . .
 e . . . r
 a p p l e
-t . . . a
-. . . . d
-. . . . s
-. . . . .
-. . . . .
+t . a . a
+. . t . d
+. . t . s
+. . q . .
+. . r . .
 . . . . .
 VALID_EXAMPLE
 
